@@ -1,11 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-        NODE_HOME = tool 'NodeJS'
-        M2_HOME = tool 'Maven3'
-        JAVA_HOME = tool 'JDK17'
-        PATH = "${M2_HOME}/bin;${NODE_HOME}/bin;${JAVA_HOME}/bin;${PATH}"
+    options {
+        skipDefaultCheckout(true)
     }
 
     stages {
@@ -13,6 +10,17 @@ pipeline {
             steps {
                 echo 'Checking out code...'
                 checkout scm
+            }
+        }
+
+        stage('Verify Tooling') {
+            steps {
+                echo 'Verifying required tools are available on Jenkins agent...'
+                bat 'node -v'
+                bat 'npm -v'
+                bat 'java -version'
+                bat 'where mvn >nul 2>nul || (echo Maven (mvn) not found in PATH. Install Maven on the agent or configure Jenkins Global Tool and update Jenkinsfile.& exit /b 1)'
+                bat 'mvn -v'
             }
         }
 
@@ -51,9 +59,13 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up...'
-            bat 'taskkill /F /IM node.exe /T 2>nul || exit 0'
-            bat 'taskkill /F /IM chromedriver.exe /T 2>nul || exit 0'
+            script {
+                node {
+                    echo 'Cleaning up...'
+                    bat 'taskkill /F /IM node.exe /T 2>nul || exit 0'
+                    bat 'taskkill /F /IM chromedriver.exe /T 2>nul || exit 0'
+                }
+            }
         }
 
         success {
@@ -62,7 +74,11 @@ pipeline {
 
         failure {
             echo '✗ Tests failed!'
-            archiveArtifacts artifacts: 'app.log,selenium-tests/target/surefire-reports/**', allowEmptyArchive: true
+            script {
+                node {
+                    archiveArtifacts artifacts: 'app.log,selenium-tests/target/surefire-reports/**', allowEmptyArchive: true
+                }
+            }
         }
     }
 }
