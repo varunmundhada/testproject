@@ -19,7 +19,7 @@ pipeline {
                 bat 'node -v'
                 bat 'npm -v'
                 bat 'java -version'
-                bat 'where mvn >nul 2>nul || (echo Maven (mvn) not found in PATH. Install Maven on the agent or configure Jenkins Global Tool and update Jenkinsfile.& exit /b 1)'
+                bat 'where mvn >nul 2>nul && echo Maven found in PATH. || (echo Maven not found in PATH. Install Maven on agent or configure Jenkins tool.& exit /b 1)'
                 bat 'mvn -v'
             }
         }
