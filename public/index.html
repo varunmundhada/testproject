@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Feedback Web App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bitter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-one"></div>
+    <div class="bg-orb orb-two"></div>
+
+    <main class="container">
+      <section class="hero reveal">
+        <p class="eyebrow">Campus Pulse</p>
+        <h1>Student Feedback Web App</h1>
+        <p class="subtitle">
+          Collect honest feedback from students and quickly see trends in course experience.
+        </p>
+      </section>
+
+      <section class="grid">
+        <article class="card reveal delay-1">
+          <h2>Submit Feedback</h2>
+          <form id="feedbackForm" novalidate>
+            <div class="field">
+              <label for="studentName">Student Name</label>
+              <input id="studentName" name="studentName" type="text" required minlength="2" />
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required />
+            </div>
+
+            <div class="field">
+              <label for="course">Course</label>
+              <input id="course" name="course" type="text" placeholder="e.g. DevOps" required minlength="2" />
+            </div>
+
+            <div class="field">
+              <label for="rating">Rating</label>
+              <select id="rating" name="rating" required>
+                <option value="">Select rating</option>
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Good</option>
+                <option value="3">3 - Average</option>
+                <option value="2">2 - Needs Work</option>
+                <option value="1">1 - Poor</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="feedbackText">Feedback</label>
+              <textarea
+                id="feedbackText"
+                name="feedbackText"
+                rows="4"
+                required
+                minlength="10"
+                placeholder="Share your experience in detail"
+              ></textarea>
+            </div>
+
+            <button type="submit">Send Feedback</button>
+            <p id="formMessage" class="message" aria-live="polite"></p>
+          </form>
+        </article>
+
+        <article class="card reveal delay-2">
+          <h2>Live Insights</h2>
+          <div class="stats">
+            <div class="stat-item">
+              <p class="label">Total Responses</p>
+              <p id="totalResponses" class="value">0</p>
+            </div>
+            <div class="stat-item">
+              <p class="label">Average Rating</p>
+              <p id="averageRating" class="value">0</p>
+            </div>
+          </div>
+
+          <div class="course-breakdown">
+            <h3>Course Breakdown</h3>
+            <ul id="courseBreakdown"></ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="card feedback-section reveal delay-3">
+        <div class="feedback-head">
+          <h2>Recent Feedback</h2>
+          <input
+            id="courseFilter"
+            type="text"
+            placeholder="Filter by course..."
+            aria-label="Filter feedback by course"
+          />
+        </div>
+        <div id="feedbackList" class="feedback-list"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
