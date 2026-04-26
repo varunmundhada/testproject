@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         NODE_HOME = tool 'NodeJS'
-        PATH = "${NODE_HOME}/bin:${PATH}"
+        M2_HOME = tool 'Maven3'
         JAVA_HOME = tool 'JDK17'
-        PATH = "${JAVA_HOME}/bin:${PATH}"
+        PATH = "${M2_HOME}/bin;${NODE_HOME}/bin;${JAVA_HOME}/bin;${PATH}"
     }
 
     stages {
@@ -15,21 +15,20 @@ pipeline {
                 checkout scm
             }
         }
-        
 
         stage('Build Node App') {
             steps {
                 echo 'Installing Node dependencies...'
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Start Web App') {
             steps {
                 echo 'Starting web app on port 3000...'
-                sh 'npm start > app.log 2>&1 &'
+                bat 'start /B node server.js > app.log 2>&1'
                 sleep(time: 5, unit: 'SECONDS')
-                sh 'curl -f http://localhost:3000 || exit 1'
+                bat 'timeout /t 3 && curl -f http://localhost:3000 || exit 1'
             }
         }
 
@@ -37,7 +36,7 @@ pipeline {
             steps {
                 echo 'Running Selenium tests...'
                 dir('selenium-tests') {
-                    sh 'mvn clean test'
+                    bat 'mvn clean test -DskipTests=false'
                 }
             }
         }
@@ -53,8 +52,8 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            sh 'pkill -f "node server.js" || true'
-            sh 'pkill -f "chromedriver" || true'
+            bat 'taskkill /F /IM node.exe /T 2>nul || exit 0'
+            bat 'taskkill /F /IM chromedriver.exe /T 2>nul || exit 0'
         }
 
         success {
